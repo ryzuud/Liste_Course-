@@ -621,7 +621,7 @@ def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
     print(
         f"\n  {C.VERT}{C.GRAS}✅ Push réussi ! Dépôt GitHub mis à jour.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
     )
-    print(f"  {C.DIM}→ https://github.com/ryzuud/Liste_Course{C.RESET}")
+    print(f"  {C.DIM}→ https://github.com/ryzuud/Liste_Course-{C.RESET}")
     print()
 
 
