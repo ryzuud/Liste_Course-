@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 Liste de Courses</title>
+    <meta name="description" content="Gestionnaire de liste de courses intelligent - Sélectionnez vos recettes et générez votre liste automatiquement.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- ─── Header ─────────────────────────────────────────── -->
+    <header id="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🛒</span>
+                <div>
+                    <h1>Liste de Courses</h1>
+                    <p class="subtitle">Planifiez vos repas, simplifiez vos courses</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-git-push" class="btn btn-ghost" title="Push vers GitHub">
+                    <span class="btn-icon">⬆️</span>
+                    <span class="btn-label">Git Push</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ─── Navigation Tabs ────────────────────────────────── -->
+    <nav id="tabs">
+        <div class="tabs-container">
+            <button class="tab active" data-tab="recettes">
+                <span class="tab-icon">📖</span>
+                <span>Recettes</span>
+            </button>
+            <button class="tab" data-tab="selection">
+                <span class="tab-icon">✅</span>
+                <span>Sélection</span>
+                <span id="selection-badge" class="badge hidden">0</span>
+            </button>
+            <button class="tab" data-tab="liste">
+                <span class="tab-icon">📝</span>
+                <span>Liste</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ─── Main Content ───────────────────────────────────── -->
+    <main>
+        <!-- Tab: Recettes -->
+        <section id="tab-recettes" class="tab-content active">
+            <div class="section-header">
+                <h2>Mes Recettes</h2>
+                <button id="btn-add-recipe" class="btn btn-primary">
+                    <span>➕</span> Ajouter
+                </button>
+            </div>
+            <div id="recipes-grid" class="recipes-grid">
+                <!-- Filled by JS -->
+            </div>
+        </section>
+
+        <!-- Tab: Sélection -->
+        <section id="tab-selection" class="tab-content">
+            <div class="section-header">
+                <h2>Sélection de la semaine</h2>
+                <button id="btn-generate" class="btn btn-accent" disabled>
+                    <span>🛒</span> Générer la liste
+                </button>
+            </div>
+            <p class="help-text">Cochez les recettes que vous souhaitez préparer cette semaine.</p>
+            <div id="selection-list" class="selection-list">
+                <!-- Filled by JS -->
+            </div>
+        </section>
+
+        <!-- Tab: Liste -->
+        <section id="tab-liste" class="tab-content">
+            <div id="liste-empty" class="empty-state">
+                <span class="empty-icon">🛒</span>
+                <h3>Aucune liste générée</h3>
+                <p>Sélectionnez vos recettes puis cliquez sur "Générer la liste"</p>
+            </div>
+            <div id="liste-content" class="hidden">
+                <div class="section-header">
+                    <h2>Liste de Courses</h2>
+                    <div class="export-buttons">
+                        <button id="btn-copy" class="btn btn-primary">
+                            <span>📋</span> Copier
+                        </button>
+                        <button id="btn-download" class="btn btn-secondary">
+                            <span>💾</span> Télécharger
+                        </button>
+                    </div>
+                </div>
+                <div id="liste-recettes-summary" class="recettes-summary"></div>
+                <div id="liste-items" class="liste-items"></div>
+                <div id="liste-stats" class="liste-stats"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ─── Modal: Ajouter recette ─────────────────────────── -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal" id="modal-add-recipe">
+            <div class="modal-header">
+                <h3>➕ Nouvelle Recette</h3>
+                <button class="modal-close" id="btn-modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="input-nom">Nom de la recette</label>
+                    <input type="text" id="input-nom" placeholder="Ex: Poulet grillé aux herbes">
+                </div>
+                <div class="form-group">
+                    <label for="input-portions">Portions</label>
+                    <input type="number" id="input-portions" value="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Ingrédients</label>
+                    <div id="ingredients-list" class="ingredients-form"></div>
+                    <button id="btn-add-ingredient" class="btn btn-ghost btn-small">
+                        ➕ Ajouter un ingrédient
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="btn-cancel">Annuler</button>
+                <button class="btn btn-primary" id="btn-save-recipe">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Modal: Détail recette ──────────────────────────── -->
+    <div id="modal-detail-overlay" class="modal-overlay hidden">
+        <div class="modal" id="modal-detail">
+            <div class="modal-header">
+                <h3 id="detail-title"></h3>
+                <button class="modal-close" id="btn-detail-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <p id="detail-portions" class="detail-portions"></p>
+                <div id="detail-ingredients" class="detail-ingredients"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="btn-delete-recipe">
+                    🗑️ Supprimer
+                </button>
+                <button class="btn btn-ghost" id="btn-detail-ok">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Toast notifications ────────────────────────────── -->
+    <div id="toast-container"></div>
+
+    <!-- ─── Git Push Modal ─────────────────────────────────── -->
+    <div id="modal-git-overlay" class="modal-overlay hidden">
+        <div class="modal modal-small" id="modal-git">
+            <div class="modal-header">
+                <h3>🔄 Git Push</h3>
+                <button class="modal-close" id="btn-git-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="git-steps" class="git-steps"></div>
+                <div id="git-status" class="git-status"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="btn-git-ok">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

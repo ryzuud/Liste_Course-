@@ -1,132 +1,133 @@
 {
   "recettes": [
     {
-      "nom": "Pâtes à la Bolognaise",
-      "portions": 4,
+      "nom": "Dîner",
+      "portions": 1,
       "ingredients": [
-        { "nom": "pâtes spaghetti", "quantite": 500, "unite": "g" },
-        { "nom": "viande hachée de bœuf", "quantite": 400, "unite": "g" },
-        { "nom": "sauce tomate", "quantite": 500, "unite": "ml" },
-        { "nom": "oignon", "quantite": 2, "unite": "pièce(s)" },
-        { "nom": "ail", "quantite": 3, "unite": "gousse(s)" },
-        { "nom": "huile d'olive", "quantite": 2, "unite": "c. à soupe" },
-        { "nom": "sel", "quantite": 1, "unite": "pincée(s)" },
-        { "nom": "poivre", "quantite": 1, "unite": "pincée(s)" },
-        { "nom": "parmesan râpé", "quantite": 50, "unite": "g" }
+        {
+          "nom": "Dinde cuite",
+          "quantite": 150,
+          "unite": "g"
+        },
+        {
+          "nom": "Champignons",
+          "quantite": 100,
+          "unite": "g"
+        },
+        {
+          "nom": "Pâtes alimentaires cuites",
+          "quantite": 150,
+          "unite": "g"
+        },
+        {
+          "nom": "Crème sure légère",
+          "quantite": 20,
+          "unite": "g"
+        },
+        {
+          "nom": "Huile d'olive",
+          "quantite": 1,
+          "unite": "c. à soupe"
+        },
+        {
+          "nom": "Chocolat noir 80%",
+          "quantite": 10,
+          "unite": "g"
+        },
+        {
+          "nom": "Moutarde jaune",
+          "quantite": 1,
+          "unite": "c. à café"
+        }
       ]
     },
     {
-      "nom": "Poulet rôti aux légumes",
-      "portions": 4,
+      "nom": "Poulet coco curry",
+      "portions": 1,
       "ingredients": [
-        { "nom": "poulet entier", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "pommes de terre", "quantite": 800, "unite": "g" },
-        { "nom": "carottes", "quantite": 4, "unite": "pièce(s)" },
-        { "nom": "oignon", "quantite": 2, "unite": "pièce(s)" },
-        { "nom": "ail", "quantite": 4, "unite": "gousse(s)" },
-        { "nom": "huile d'olive", "quantite": 3, "unite": "c. à soupe" },
-        { "nom": "thym", "quantite": 2, "unite": "branche(s)" },
-        { "nom": "romarin", "quantite": 1, "unite": "branche(s)" },
-        { "nom": "sel", "quantite": 1, "unite": "pincée(s)" },
-        { "nom": "poivre", "quantite": 1, "unite": "pincée(s)" }
+        {
+          "nom": "Blanc de poulet",
+          "quantite": 150,
+          "unite": "g"
+        },
+        {
+          "nom": "Riz basmati cuit",
+          "quantite": 120,
+          "unite": "g"
+        },
+        {
+          "nom": "Brocoli",
+          "quantite": 100,
+          "unite": "g"
+        },
+        {
+          "nom": "Lait de coco allégé",
+          "quantite": 60,
+          "unite": "ml"
+        },
+        {
+          "nom": "Pâte de curry",
+          "quantite": 10,
+          "unite": "g"
+        }
       ]
     },
     {
-      "nom": "Salade César",
-      "portions": 2,
+      "nom": "Porridge",
+      "portions": 1,
       "ingredients": [
-        { "nom": "laitue romaine", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "blanc de poulet", "quantite": 200, "unite": "g" },
-        { "nom": "parmesan râpé", "quantite": 40, "unite": "g" },
-        { "nom": "croûtons", "quantite": 100, "unite": "g" },
-        { "nom": "huile d'olive", "quantite": 3, "unite": "c. à soupe" },
-        { "nom": "jus de citron", "quantite": 1, "unite": "c. à soupe" },
-        { "nom": "ail", "quantite": 1, "unite": "gousse(s)" },
-        { "nom": "moutarde de Dijon", "quantite": 1, "unite": "c. à café" },
-        { "nom": "sel", "quantite": 1, "unite": "pincée(s)" },
-        { "nom": "poivre", "quantite": 1, "unite": "pincée(s)" }
+        {
+          "nom": "Flocons d'avoine",
+          "quantite": 50,
+          "unite": "g"
+        },
+        {
+          "nom": "Lait d'amande",
+          "quantite": 200,
+          "unite": "ml"
+        },
+        {
+          "nom": "Protéine en poudre (whey)",
+          "quantite": 30,
+          "unite": "g"
+        },
+        {
+          "nom": "Banane",
+          "quantite": 1,
+          "unite": "pièce(s)"
+        },
+        {
+          "nom": "Miel",
+          "quantite": 5,
+          "unite": "g"
+        }
       ]
     },
     {
-      "nom": "Quiche Lorraine",
-      "portions": 6,
+      "nom": "Collation",
+      "portions": 1,
       "ingredients": [
-        { "nom": "pâte brisée", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "lardons fumés", "quantite": 200, "unite": "g" },
-        { "nom": "œufs", "quantite": 3, "unite": "pièce(s)" },
-        { "nom": "crème fraîche", "quantite": 200, "unite": "ml" },
-        { "nom": "lait", "quantite": 100, "unite": "ml" },
-        { "nom": "gruyère râpé", "quantite": 100, "unite": "g" },
-        { "nom": "sel", "quantite": 1, "unite": "pincée(s)" },
-        { "nom": "poivre", "quantite": 1, "unite": "pincée(s)" },
-        { "nom": "noix de muscade", "quantite": 1, "unite": "pincée(s)" }
+        {
+          "nom": "Banane",
+          "quantite": 1,
+          "unite": "pièce(s)"
+        },
+        {
+          "nom": "Amande",
+          "quantite": 25,
+          "unite": "g"
+        }
       ]
     },
     {
-      "nom": "Curry de légumes",
-      "portions": 4,
+      "nom": "En-cas",
+      "portions": 1,
       "ingredients": [
-        { "nom": "pois chiches (conserve)", "quantite": 400, "unite": "g" },
-        { "nom": "lait de coco", "quantite": 400, "unite": "ml" },
-        { "nom": "sauce tomate", "quantite": 200, "unite": "ml" },
-        { "nom": "oignon", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "ail", "quantite": 2, "unite": "gousse(s)" },
-        { "nom": "gingembre frais", "quantite": 1, "unite": "c. à soupe" },
-        { "nom": "curry en poudre", "quantite": 2, "unite": "c. à soupe" },
-        { "nom": "courgette", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "poivron rouge", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "riz basmati", "quantite": 300, "unite": "g" },
-        { "nom": "huile d'olive", "quantite": 2, "unite": "c. à soupe" },
-        { "nom": "sel", "quantite": 1, "unite": "pincée(s)" }
-      ]
-    },
-    {
-      "nom": "Crêpes",
-      "portions": 4,
-      "ingredients": [
-        { "nom": "farine", "quantite": 250, "unite": "g" },
-        { "nom": "œufs", "quantite": 4, "unite": "pièce(s)" },
-        { "nom": "lait", "quantite": 500, "unite": "ml" },
-        { "nom": "beurre fondu", "quantite": 50, "unite": "g" },
-        { "nom": "sucre", "quantite": 2, "unite": "c. à soupe" },
-        { "nom": "sel", "quantite": 1, "unite": "pincée(s)" }
-      ]
-    },
-    {
-      "nom": "Risotto aux champignons",
-      "portions": 4,
-      "ingredients": [
-        { "nom": "riz arborio", "quantite": 300, "unite": "g" },
-        { "nom": "champignons de Paris", "quantite": 250, "unite": "g" },
-        { "nom": "oignon", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "ail", "quantite": 2, "unite": "gousse(s)" },
-        { "nom": "bouillon de légumes", "quantite": 1, "unite": "L" },
-        { "nom": "vin blanc", "quantite": 100, "unite": "ml" },
-        { "nom": "parmesan râpé", "quantite": 60, "unite": "g" },
-        { "nom": "beurre", "quantite": 30, "unite": "g" },
-        { "nom": "huile d'olive", "quantite": 2, "unite": "c. à soupe" },
-        { "nom": "sel", "quantite": 1, "unite": "pincée(s)" },
-        { "nom": "poivre", "quantite": 1, "unite": "pincée(s)" }
-      ]
-    },
-    {
-      "nom": "Tacos maison",
-      "portions": 4,
-      "ingredients": [
-        { "nom": "tortillas de blé", "quantite": 8, "unite": "pièce(s)" },
-        { "nom": "viande hachée de bœuf", "quantite": 500, "unite": "g" },
-        { "nom": "oignon", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "ail", "quantite": 2, "unite": "gousse(s)" },
-        { "nom": "poivron rouge", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "tomates", "quantite": 2, "unite": "pièce(s)" },
-        { "nom": "salade iceberg", "quantite": 1, "unite": "pièce(s)" },
-        { "nom": "fromage râpé", "quantite": 100, "unite": "g" },
-        { "nom": "crème fraîche", "quantite": 100, "unite": "ml" },
-        { "nom": "cumin", "quantite": 1, "unite": "c. à café" },
-        { "nom": "paprika", "quantite": 1, "unite": "c. à café" },
-        { "nom": "huile d'olive", "quantite": 2, "unite": "c. à soupe" },
-        { "nom": "sel", "quantite": 1, "unite": "pincée(s)" },
-        { "nom": "poivre", "quantite": 1, "unite": "pincée(s)" }
+        {
+          "nom": "Billion - Barre Protéinée aux Cacahuètes",
+          "quantite": 1,
+          "unite": "pièce(s)"
+        }
       ]
     }
   ]
