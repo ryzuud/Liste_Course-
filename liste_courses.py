@@ -9,17 +9,17 @@ import json
 import os
 import subprocess
 import sys
+from collections import defaultdict
+from datetime import datetime
 
-# Forcer l'encodage UTF-8 sur Windows pour supporter les emojis et caractères spéciaux
+# Forcer l'encodage UTF-8 sur Windows pour supporter les emojis et caractères spéciaux  # noqa: E501, pylint: disable=line-too-long
 if sys.platform == "win32":
     os.system("")  # Active le support ANSI/VT100 sur Windows 10+
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stderr.reconfigure(encoding="utf-8")
-from collections import defaultdict
-from datetime import datetime
 
-# ─── Configuration ────────────────────────────────────────────────────────────
+# ─── Configuration ────────────────────────────────────────────────────────────  # noqa: E501, pylint: disable=line-too-long
 
 DOSSIER_PROJET = os.path.dirname(os.path.abspath(__file__))
 FICHIER_RECETTES = os.path.join(DOSSIER_PROJET, "recettes.json")
@@ -30,8 +30,10 @@ GITHUB_REMOTE = "https://github.com/ryzuud/Liste_Course.git"
 
 # ─── Couleurs terminal ───────────────────────────────────────────────────────
 
-class Couleurs:
+
+class Couleurs:  # pylint: disable=too-few-public-methods
     """Codes ANSI pour colorer le terminal (désactivé si non supporté)."""
+
     SUPPORT = sys.stdout.isatty()
 
     RESET = "\033[0m" if SUPPORT else ""
@@ -49,7 +51,8 @@ class Couleurs:
 C = Couleurs
 
 
-# ─── Fonctions utilitaires ────────────────────────────────────────────────────
+# ─── Fonctions utilitaires ────────────────────────────────────────────────────  # noqa: E501, pylint: disable=line-too-long
+
 
 def charger_recettes() -> list[dict]:
     """Charge les recettes depuis le fichier JSON."""
@@ -58,7 +61,9 @@ def charger_recettes() -> list[dict]:
             data = json.load(f)
         return data.get("recettes", [])
     except FileNotFoundError:
-        print(f"{C.ROUGE}❌ Fichier '{FICHIER_RECETTES}' introuvable.{C.RESET}")
+        print(
+            f"{C.ROUGE}❌ Fichier '{FICHIER_RECETTES}' introuvable.{C.RESET}"
+        )
         sys.exit(1)
     except json.JSONDecodeError as e:
         print(f"{C.ROUGE}❌ Erreur de lecture JSON : {e}{C.RESET}")
@@ -68,9 +73,15 @@ def charger_recettes() -> list[dict]:
 def afficher_banniere():
     """Affiche la bannière du programme."""
     print()
-    print(f"{C.CYAN}{C.GRAS}╔══════════════════════════════════════════════════╗{C.RESET}")
-    print(f"{C.CYAN}{C.GRAS}║     🛒  GESTIONNAIRE DE LISTE DE COURSES  🛒    ║{C.RESET}")
-    print(f"{C.CYAN}{C.GRAS}╚══════════════════════════════════════════════════╝{C.RESET}")
+    print(
+        f"{C.CYAN}{C.GRAS}╔══════════════════════════════════════════════════╗{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
+    print(
+        f"{C.CYAN}{C.GRAS}║     🛒  GESTIONNAIRE DE LISTE DE COURSES  🛒    ║{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
+    print(
+        f"{C.CYAN}{C.GRAS}╚══════════════════════════════════════════════════╝{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
     print()
 
 
@@ -80,7 +91,9 @@ def afficher_menu_principal():
     print(f"{C.BLEU}{C.GRAS}  MENU PRINCIPAL{C.RESET}")
     print(f"{C.GRAS}{'─' * 50}{C.RESET}")
     print(f"  {C.JAUNE}1.{C.RESET} 📋  Voir toutes les recettes")
-    print(f"  {C.JAUNE}2.{C.RESET} ✅  Sélectionner les recettes de la semaine")
+    print(
+        f"  {C.JAUNE}2.{C.RESET} ✅  Sélectionner les recettes de la semaine"
+    )
     print(f"  {C.JAUNE}3.{C.RESET} 📝  Générer la liste de courses")
     print(f"  {C.JAUNE}4.{C.RESET} ➕  Ajouter une nouvelle recette")
     print(f"  {C.JAUNE}5.{C.RESET} 🗑️   Supprimer une recette")
@@ -91,13 +104,17 @@ def afficher_menu_principal():
 def afficher_recettes(recettes: list[dict]):
     """Affiche la liste de toutes les recettes disponibles."""
     print()
-    print(f"{C.GRAS}{C.BLEU}  📖 RECETTES DISPONIBLES ({len(recettes)}){C.RESET}")
+    print(
+        f"{C.GRAS}{C.BLEU}  📖 RECETTES DISPONIBLES ({len(recettes)}){C.RESET}"
+    )
     print(f"  {'─' * 46}")
     for i, recette in enumerate(recettes, 1):
         nb_ing = len(recette["ingredients"])
         portions = recette.get("portions", "?")
         print(f"  {C.JAUNE}{i:>2}.{C.RESET} {C.GRAS}{recette['nom']}{C.RESET}")
-        print(f"      {C.DIM}{nb_ing} ingrédients · {portions} portions{C.RESET}")
+        print(
+            f"      {C.DIM}{nb_ing} ingrédients · {portions} portions{C.RESET}"
+        )
     print()
 
 
@@ -108,23 +125,31 @@ def afficher_detail_recette(recette: dict):
     print(f"  {C.DIM}Portions : {recette.get('portions', '?')}{C.RESET}")
     print(f"  {'─' * 40}")
     for ing in recette["ingredients"]:
-        print(f"    • {ing['nom']}: {C.CYAN}{ing['quantite']} {ing['unite']}{C.RESET}")
+        print(
+            f"    • {ing['nom']}: {C.CYAN}{ing['quantite']} {ing['unite']}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+        )
     print()
 
 
 def selectionner_recettes(recettes: list[dict]) -> list[dict]:
     """Permet à l'utilisateur de sélectionner les recettes de la semaine."""
     print()
-    print(f"{C.GRAS}{C.VERT}  ✅ SÉLECTION DES RECETTES DE LA SEMAINE{C.RESET}")
+    print(
+        f"{C.GRAS}{C.VERT}  ✅ SÉLECTION DES RECETTES DE LA SEMAINE{C.RESET}"
+    )
     print(f"  {'─' * 46}")
     print()
 
     # Afficher les recettes numérotées
     for i, recette in enumerate(recettes, 1):
-        print(f"  {C.JAUNE}{i:>2}.{C.RESET} {recette['nom']} {C.DIM}({recette.get('portions', '?')} portions){C.RESET}")
+        print(
+            f"  {C.JAUNE}{i:>2}.{C.RESET} {recette['nom']} {C.DIM}({recette.get('portions', '?')} portions){C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+        )
     print()
 
-    print(f"  {C.DIM}Entrez les numéros des recettes séparés par des virgules.{C.RESET}")
+    print(
+        f"  {C.DIM}Entrez les numéros des recettes séparés par des virgules.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
     print(f"  {C.DIM}Exemple : 1, 3, 5{C.RESET}")
     print()
 
@@ -146,10 +171,14 @@ def selectionner_recettes(recettes: list[dict]) -> list[dict]:
                     invalides.append(idx)
 
             if invalides:
-                print(f"  {C.ROUGE}⚠ Numéros invalides ignorés : {invalides}{C.RESET}")
+                print(
+                    f"  {C.ROUGE}⚠ Numéros invalides ignorés : {invalides}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+                )
 
             if not selection:
-                print(f"  {C.ROUGE}⚠ Aucune recette valide sélectionnée, réessayez.{C.RESET}")
+                print(
+                    f"  {C.ROUGE}⚠ Aucune recette valide sélectionnée, réessayez.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+                )
                 continue
 
             # Confirmation
@@ -159,15 +188,21 @@ def selectionner_recettes(recettes: list[dict]) -> list[dict]:
                 print(f"    {C.VERT}✓{C.RESET} {r['nom']}")
             print()
 
-            confirm = input(f"  {C.CYAN}Confirmer ? (O/n) ▸ {C.RESET}").strip().lower()
+            confirm = (
+                input(f"  {C.CYAN}Confirmer ? (O/n) ▸ {C.RESET}")
+                .strip()
+                .lower()
+            )
             if confirm in ("", "o", "oui", "y", "yes"):
                 return selection
-            else:
-                print(f"  {C.JAUNE}↩ Reprenons la sélection...{C.RESET}")
-                print()
+
+            print(f"  {C.JAUNE}↩ Reprenons la sélection...{C.RESET}")
+            print()
 
         except ValueError:
-            print(f"  {C.ROUGE}⚠ Format invalide. Utilisez des numéros séparés par des virgules.{C.RESET}")
+            print(
+                f"  {C.ROUGE}⚠ Format invalide. Utilisez des numéros séparés par des virgules.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+            )
 
 
 def compiler_ingredients(selection: list[dict]) -> list[dict]:
@@ -198,11 +233,13 @@ def compiler_ingredients(selection: list[dict]) -> list[dict]:
         if quantite == int(quantite):
             quantite = int(quantite)
 
-        liste_finale.append({
-            "nom": nom_affiche,
-            "quantite": quantite,
-            "unite": unite,
-        })
+        liste_finale.append(
+            {
+                "nom": nom_affiche,
+                "quantite": quantite,
+                "unite": unite,
+            }
+        )
 
     return liste_finale
 
@@ -210,9 +247,15 @@ def compiler_ingredients(selection: list[dict]) -> list[dict]:
 def afficher_liste_courses(liste: list[dict], selection: list[dict]):
     """Affiche la liste de courses compilée dans le terminal."""
     print()
-    print(f"{C.GRAS}{C.CYAN}╔══════════════════════════════════════════════════╗{C.RESET}")
-    print(f"{C.GRAS}{C.CYAN}║          🛒  LISTE DE COURSES  🛒               ║{C.RESET}")
-    print(f"{C.GRAS}{C.CYAN}╚══════════════════════════════════════════════════╝{C.RESET}")
+    print(
+        f"{C.GRAS}{C.CYAN}╔══════════════════════════════════════════════════╗{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
+    print(
+        f"{C.GRAS}{C.CYAN}║          🛒  LISTE DE COURSES  🛒               ║{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
+    print(
+        f"{C.GRAS}{C.CYAN}╚══════════════════════════════════════════════════╝{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
     print()
 
     # Résumé des recettes
@@ -227,13 +270,15 @@ def afficher_liste_courses(liste: list[dict], selection: list[dict]):
 
     # Liste des ingrédients
     for ing in liste:
-        print(f"    ☐ {ing['nom']:<30} {C.CYAN}{ing['quantite']} {ing['unite']}{C.RESET}")
+        print(
+            f"    ☐ {ing['nom']:<30} {C.CYAN}{ing['quantite']} {ing['unite']}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+        )
 
     print()
 
 
 def generer_texte_export(liste: list[dict], selection: list[dict]) -> str:
-    """Génère le texte formaté pour l'export (Samsung Notes / fichier texte)."""
+    """Génère le texte formaté pour l'export (Samsung Notes / fichier texte)."""  # noqa: E501, pylint: disable=line-too-long
     date = datetime.now().strftime("%d/%m/%Y")
     lignes = []
 
@@ -262,16 +307,15 @@ def generer_texte_export(liste: list[dict], selection: list[dict]) -> str:
 def copier_presse_papiers(texte: str) -> bool:
     """Copie le texte dans le presse-papiers (Windows)."""
     try:
-        import subprocess
-        process = subprocess.Popen(
+        with subprocess.Popen(
             ["clip.exe"],
             stdin=subprocess.PIPE,
             encoding="utf-16-le",  # clip.exe attend de l'UTF-16 LE sur Windows
-        )
-        # clip.exe sur Windows attend du texte via stdin
-        process.communicate(input=texte)
-        return process.returncode == 0
-    except Exception:
+        ) as process:
+            # clip.exe sur Windows attend du texte via stdin
+            process.communicate(input=texte)
+            return process.returncode == 0
+    except (OSError, subprocess.SubprocessError):
         return False
 
 
@@ -288,7 +332,9 @@ def menu_export(liste: list[dict], selection: list[dict]):
 
     print(f"  {C.GRAS}{C.MAGENTA}📤 OPTIONS D'EXPORT{C.RESET}")
     print(f"  {'─' * 40}")
-    print(f"  {C.JAUNE}1.{C.RESET} 📋  Copier dans le presse-papiers (pour Samsung Notes)")
+    print(
+        f"  {C.JAUNE}1.{C.RESET} 📋  Copier dans le presse-papiers (pour Samsung Notes)"  # noqa: E501, pylint: disable=line-too-long
+    )
     print(f"  {C.JAUNE}2.{C.RESET} 💾  Exporter en fichier texte (.txt)")
     print(f"  {C.JAUNE}3.{C.RESET} 📋 + 💾  Les deux !")
     print(f"  {C.JAUNE}0.{C.RESET} ↩   Retour")
@@ -298,17 +344,25 @@ def menu_export(liste: list[dict], selection: list[dict]):
 
     if choix in ("1", "3"):
         if copier_presse_papiers(texte):
-            print(f"\n  {C.VERT}✅ Liste copiée dans le presse-papiers !{C.RESET}")
-            print(f"  {C.DIM}→ Ouvrez Samsung Notes et collez (Ctrl+V){C.RESET}")
+            print(
+                f"\n  {C.VERT}✅ Liste copiée dans le presse-papiers !{C.RESET}"
+            )
+            print(
+                f"  {C.DIM}→ Ouvrez Samsung Notes et collez (Ctrl+V){C.RESET}"
+            )
         else:
-            print(f"\n  {C.ROUGE}❌ Impossible de copier dans le presse-papiers.{C.RESET}")
+            print(
+                f"\n  {C.ROUGE}❌ Impossible de copier dans le presse-papiers.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+            )
             print(f"  {C.DIM}→ Utilisez plutôt l'export fichier.{C.RESET}")
 
     if choix in ("2", "3"):
         chemin = exporter_fichier(texte)
         print(f"\n  {C.VERT}✅ Liste exportée vers :{C.RESET}")
         print(f"  {C.CYAN}{chemin}{C.RESET}")
-        print(f"  {C.DIM}→ Ouvrez ce fichier avec Samsung Notes ou partagez-le.{C.RESET}")
+        print(
+            f"  {C.DIM}→ Ouvrez ce fichier avec Samsung Notes ou partagez-le.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+        )
 
     if choix == "0":
         return
@@ -330,14 +384,18 @@ def ajouter_recette(recettes: list[dict]) -> list[dict]:
 
     while True:
         try:
-            portions = int(input(f"  {C.CYAN}Nombre de portions ▸ {C.RESET}").strip())
+            portions = int(
+                input(f"  {C.CYAN}Nombre de portions ▸ {C.RESET}").strip()
+            )
             break
         except ValueError:
             print(f"  {C.ROUGE}⚠ Entrez un nombre entier.{C.RESET}")
 
     ingredients = []
     print()
-    print(f"  {C.DIM}Ajoutez les ingrédients un par un. Tapez 'fin' pour terminer.{C.RESET}")
+    print(
+        f"  {C.DIM}Ajoutez les ingrédients un par un. Tapez 'fin' pour terminer.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
     print()
 
     while True:
@@ -350,20 +408,28 @@ def ajouter_recette(recettes: list[dict]) -> list[dict]:
 
         while True:
             try:
-                quantite = float(input(f"    {C.JAUNE}Quantité ▸ {C.RESET}").strip())
+                quantite = float(
+                    input(f"    {C.JAUNE}Quantité ▸ {C.RESET}").strip()
+                )
                 break
             except ValueError:
                 print(f"    {C.ROUGE}⚠ Entrez un nombre.{C.RESET}")
 
-        unite = input(f"    {C.JAUNE}Unité (g, ml, pièce(s), c. à soupe...) ▸ {C.RESET}").strip()
+        unite = input(
+            f"    {C.JAUNE}Unité (g, ml, pièce(s), c. à soupe...) ▸ {C.RESET}"
+        ).strip()
         if not unite:
             unite = "pièce(s)"
 
-        ingredients.append({
-            "nom": nom_ing,
-            "quantite": quantite if quantite != int(quantite) else int(quantite),
-            "unite": unite,
-        })
+        ingredients.append(
+            {
+                "nom": nom_ing,
+                "quantite": (
+                    quantite if quantite != int(quantite) else int(quantite)
+                ),
+                "unite": unite,
+            }
+        )
         print(f"    {C.VERT}✓ {nom_ing} ajouté{C.RESET}")
         print()
 
@@ -392,12 +458,20 @@ def supprimer_recette(recettes: list[dict]) -> list[dict]:
     print()
 
     try:
-        choix = int(input(f"  {C.CYAN}Numéro à supprimer (0 = annuler) ▸ {C.RESET}").strip())
+        choix = int(
+            input(
+                f"  {C.CYAN}Numéro à supprimer (0 = annuler) ▸ {C.RESET}"
+            ).strip()
+        )
         if choix == 0:
             return recettes
         if 1 <= choix <= len(recettes):
             nom = recettes[choix - 1]["nom"]
-            confirm = input(f"  {C.ROUGE}Supprimer « {nom} » ? (o/N) ▸ {C.RESET}").strip().lower()
+            confirm = (
+                input(f"  {C.ROUGE}Supprimer « {nom} » ? (o/N) ▸ {C.RESET}")
+                .strip()
+                .lower()
+            )
             if confirm in ("o", "oui", "y", "yes"):
                 recettes.pop(choix - 1)
                 sauvegarder_recettes(recettes)
@@ -422,6 +496,7 @@ def sauvegarder_recettes(recettes: list[dict]):
 
 # ─── Automatisation Git ──────────────────────────────────────────────────────
 
+
 def _run_git(*args: str) -> subprocess.CompletedProcess:
     """Exécute une commande git dans le dossier du projet."""
     return subprocess.run(
@@ -430,10 +505,11 @@ def _run_git(*args: str) -> subprocess.CompletedProcess:
         capture_output=True,
         text=True,
         encoding="utf-8",
+        check=False,
     )
 
 
-def git_auto_push():
+def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
     """
     Automatisation Git :
     1. Vérifie / initialise le dépôt Git
@@ -449,14 +525,20 @@ def git_auto_push():
     # ── Étape 1 : Vérifier / initialiser le dépôt ─────────────────────────
     result = _run_git("rev-parse", "--is-inside-work-tree")
     if result.returncode != 0:
-        print(f"  {C.JAUNE}📁 Aucun dépôt Git détecté. Initialisation...{C.RESET}")
+        print(
+            f"  {C.JAUNE}📁 Aucun dépôt Git détecté. Initialisation...{C.RESET}"
+        )
         result = _run_git("init")
         if result.returncode != 0:
-            print(f"  {C.ROUGE}❌ Échec de git init : {result.stderr.strip()}{C.RESET}")
+            print(
+                f"  {C.ROUGE}❌ Échec de git init : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+            )
             return
         # S'assurer qu'on est sur la branche main
         _run_git("branch", "-M", "main")
-        print(f"  {C.VERT}✅ Dépôt Git initialisé sur la branche main.{C.RESET}")
+        print(
+            f"  {C.VERT}✅ Dépôt Git initialisé sur la branche main.{C.RESET}"
+        )
     else:
         print(f"  {C.VERT}✅ Dépôt Git détecté.{C.RESET}")
 
@@ -464,10 +546,14 @@ def git_auto_push():
     result = _run_git("remote", "get-url", "origin")
     if result.returncode != 0:
         # Pas de remote origin → l'ajouter
-        print(f"  {C.JAUNE}🔗 Ajout du remote origin → {GITHUB_REMOTE}{C.RESET}")
+        print(
+            f"  {C.JAUNE}🔗 Ajout du remote origin → {GITHUB_REMOTE}{C.RESET}"
+        )
         result = _run_git("remote", "add", "origin", GITHUB_REMOTE)
         if result.returncode != 0:
-            print(f"  {C.ROUGE}❌ Échec de l'ajout du remote : {result.stderr.strip()}{C.RESET}")
+            print(
+                f"  {C.ROUGE}❌ Échec de l'ajout du remote : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+            )
             return
         print(f"  {C.VERT}✅ Remote origin ajouté.{C.RESET}")
     else:
@@ -478,13 +564,17 @@ def git_auto_push():
             _run_git("remote", "set-url", "origin", GITHUB_REMOTE)
             print(f"  {C.VERT}✅ Remote origin mis à jour.{C.RESET}")
         else:
-            print(f"  {C.VERT}✅ Remote origin correctement configuré.{C.RESET}")
+            print(
+                f"  {C.VERT}✅ Remote origin correctement configuré.{C.RESET}"
+            )
 
     # ── Étape 3 : git add . ───────────────────────────────────────────────
     print(f"\n  {C.CYAN}📦 Ajout des fichiers modifiés...{C.RESET}")
     result = _run_git("add", ".")
     if result.returncode != 0:
-        print(f"  {C.ROUGE}❌ Échec de git add : {result.stderr.strip()}{C.RESET}")
+        print(
+            f"  {C.ROUGE}❌ Échec de git add : {result.stderr.strip()}{C.RESET}"
+        )
         return
 
     # Vérifier s'il y a quelque chose à commiter
@@ -496,10 +586,12 @@ def git_auto_push():
 
     # ── Étape 4 : git commit ──────────────────────────────────────────────
     message_commit = f"Mise à jour automatique - {NOM_PROJET}"
-    print(f"  {C.CYAN}💬 Commit : \"{message_commit}\"...{C.RESET}")
+    print(f'  {C.CYAN}💬 Commit : "{message_commit}"...{C.RESET}')
     result = _run_git("commit", "-m", message_commit)
     if result.returncode != 0:
-        print(f"  {C.ROUGE}❌ Échec de git commit : {result.stderr.strip()}{C.RESET}")
+        print(
+            f"  {C.ROUGE}❌ Échec de git commit : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+        )
         return
     print(f"  {C.VERT}✅ Commit effectué.{C.RESET}")
 
@@ -511,21 +603,32 @@ def git_auto_push():
         print(f"\n  {C.ROUGE}❌ Échec du push :{C.RESET}")
         print(f"  {C.ROUGE}{stderr}{C.RESET}")
         if "rejected" in stderr:
-            print(f"\n  {C.JAUNE}💡 Astuce : essayez 'git pull --rebase origin main' puis relancez.{C.RESET}")
-        elif "Could not resolve host" in stderr or "unable to access" in stderr:
-            print(f"\n  {C.JAUNE}💡 Vérifiez votre connexion internet et l'URL du dépôt.{C.RESET}")
+            print(
+                f"\n  {C.JAUNE}💡 Astuce : essayez 'git pull --rebase origin main' puis relancez.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+            )
+        elif (
+            "Could not resolve host" in stderr or "unable to access" in stderr
+        ):
+            print(
+                f"\n  {C.JAUNE}💡 Vérifiez votre connexion internet et l'URL du dépôt.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+            )
         elif "Authentication" in stderr or "403" in stderr:
-            print(f"\n  {C.JAUNE}💡 Vérifiez votre authentification GitHub (token / SSH).{C.RESET}")
+            print(
+                f"\n  {C.JAUNE}💡 Vérifiez votre authentification GitHub (token / SSH).{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+            )
         return
 
-    print(f"\n  {C.VERT}{C.GRAS}✅ Push réussi ! Dépôt GitHub mis à jour.{C.RESET}")
+    print(
+        f"\n  {C.VERT}{C.GRAS}✅ Push réussi ! Dépôt GitHub mis à jour.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+    )
     print(f"  {C.DIM}→ https://github.com/ryzuud/Liste_Course{C.RESET}")
     print()
 
 
 # ─── Boucle principale ───────────────────────────────────────────────────────
 
-def main():
+
+def main():  # pylint: disable=too-many-branches,too-many-statements
     """Point d'entrée du programme."""
     recettes = charger_recettes()
     selection_courante = []
@@ -540,7 +643,9 @@ def main():
         if choix == "1":
             afficher_recettes(recettes)
             # Proposer de voir le détail d'une recette
-            detail = input(f"  {C.DIM}Voir le détail d'une recette ? (numéro ou Entrée) ▸ {C.RESET}").strip()
+            detail = input(
+                f"  {C.DIM}Voir le détail d'une recette ? (numéro ou Entrée) ▸ {C.RESET}"  # noqa: E501, pylint: disable=line-too-long
+            ).strip()
             if detail.isdigit() and 1 <= int(detail) <= len(recettes):
                 afficher_detail_recette(recettes[int(detail) - 1])
 
@@ -548,13 +653,17 @@ def main():
             selection_courante = selectionner_recettes(recettes)
             # Compiler automatiquement
             liste_courante = compiler_ingredients(selection_courante)
-            print(f"  {C.VERT}✅ {len(selection_courante)} recette(s) sélectionnée(s), "
-                  f"{len(liste_courante)} ingrédients compilés.{C.RESET}")
+            print(
+                f"  {C.VERT}✅ {len(selection_courante)} recette(s) sélectionnée(s), "  # noqa: E501, pylint: disable=line-too-long
+                f"{len(liste_courante)} ingrédients compilés.{C.RESET}"
+            )
             print()
 
         elif choix == "3":
             if not selection_courante:
-                print(f"\n  {C.ROUGE}⚠ Sélectionnez d'abord des recettes (option 2).{C.RESET}\n")
+                print(
+                    f"\n  {C.ROUGE}⚠ Sélectionnez d'abord des recettes (option 2).{C.RESET}\n"  # noqa: E501, pylint: disable=line-too-long
+                )
                 continue
             afficher_liste_courses(liste_courante, selection_courante)
             menu_export(liste_courante, selection_courante)
@@ -577,11 +686,11 @@ def main():
 
 if __name__ == "__main__":
     try:
-        succes = main()
-        if succes:
+        SUCCES = main()
+        if SUCCES:
             git_auto_push()
     except KeyboardInterrupt:
         print(f"\n\n  {C.JAUNE}⚠ Interruption clavier. Au revoir !{C.RESET}\n")
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         print(f"\n  {C.ROUGE}❌ Erreur inattendue : {e}{C.RESET}")
         print(f"  {C.ROUGE}Le push Git n'a pas été effectué.{C.RESET}\n")
