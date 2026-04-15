@@ -25,7 +25,7 @@ DOSSIER_PROJET = os.path.dirname(os.path.abspath(__file__))
 FICHIER_RECETTES = os.path.join(DOSSIER_PROJET, "recettes.json")
 FICHIER_EXPORT = os.path.join(DOSSIER_PROJET, "liste_courses.txt")
 NOM_PROJET = "Liste_Course"
-GITHUB_REMOTE = "https://github.com/ryzuud/Liste_Course.git"
+GITHUB_REMOTE = "https://github.com/ryzuud/Liste_Course-.git"
 
 
 # ─── Couleurs terminal ───────────────────────────────────────────────────────
