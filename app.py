@@ -15,10 +15,11 @@ if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stderr.reconfigure(encoding="utf-8")
 
-from collections import defaultdict
 from datetime import datetime
 
 from flask import Flask, jsonify, render_template, request
+
+from liste_courses import compiler_ingredients
 
 # ─── Configuration ────────────────────────────────────────────────────────────
 
@@ -45,30 +46,6 @@ def sauvegarder_recettes(recettes: list[dict]):
     data = {"recettes": recettes}
     with open(FICHIER_RECETTES, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-
-
-def compiler_ingredients(selection: list[dict]) -> list[dict]:
-    """Compile et dédoublonne les ingrédients des recettes sélectionnées."""
-    comptes: dict[tuple[str, str], float] = defaultdict(float)
-    noms_originaux: dict[tuple[str, str], str] = {}
-
-    for recette in selection:
-        for ing in recette["ingredients"]:
-            cle = (ing["nom"].lower().strip(), ing["unite"].lower().strip())
-            comptes[cle] += ing["quantite"]
-            if cle not in noms_originaux:
-                noms_originaux[cle] = ing["nom"]
-
-    liste_finale = []
-    for cle, quantite in sorted(comptes.items(), key=lambda x: x[0][0]):
-        if quantite == int(quantite):
-            quantite = int(quantite)
-        liste_finale.append({
-            "nom": noms_originaux[cle],
-            "quantite": quantite,
-            "unite": cle[1],
-        })
-    return liste_finale
 
 
 def _run_git(*args: str) -> subprocess.CompletedProcess:
