@@ -3,9 +3,7 @@ Serveur web Flask pour le Gestionnaire de Liste de Courses.
 Lance l'interface web sur http://localhost:5000
 """
 
-import json
 import os
-import subprocess
 import sys
 
 # Forcer UTF-8 sur Windows
@@ -15,15 +13,19 @@ if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stderr.reconfigure(encoding="utf-8")
 
-from collections import defaultdict
 from datetime import datetime
 
 from flask import Flask, jsonify, render_template, request
 
+from utils import (
+    _run_git,
+    charger_recettes,
+    compiler_ingredients,
+    sauvegarder_recettes,
+)
+
 # ─── Configuration ────────────────────────────────────────────────────────────
 
-DOSSIER_PROJET = os.path.dirname(os.path.abspath(__file__))
-FICHIER_RECETTES = os.path.join(DOSSIER_PROJET, "recettes.json")
 NOM_PROJET = "Liste_Course"
 GITHUB_REMOTE = "https://github.com/ryzuud/Liste_Course-.git"
 
@@ -31,56 +33,6 @@ app = Flask(__name__, static_folder="static", template_folder="templates")
 
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
-
-
-def charger_recettes() -> list[dict]:
-    """Charge les recettes depuis le fichier JSON."""
-    with open(FICHIER_RECETTES, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("recettes", [])
-
-
-def sauvegarder_recettes(recettes: list[dict]):
-    """Sauvegarde les recettes dans le fichier JSON."""
-    data = {"recettes": recettes}
-    with open(FICHIER_RECETTES, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-
-def compiler_ingredients(selection: list[dict]) -> list[dict]:
-    """Compile et dédoublonne les ingrédients des recettes sélectionnées."""
-    comptes: dict[tuple[str, str], float] = defaultdict(float)
-    noms_originaux: dict[tuple[str, str], str] = {}
-
-    for recette in selection:
-        for ing in recette["ingredients"]:
-            cle = (ing["nom"].lower().strip(), ing["unite"].lower().strip())
-            comptes[cle] += ing["quantite"]
-            if cle not in noms_originaux:
-                noms_originaux[cle] = ing["nom"]
-
-    liste_finale = []
-    for cle, quantite in sorted(comptes.items(), key=lambda x: x[0][0]):
-        if quantite == int(quantite):
-            quantite = int(quantite)
-        liste_finale.append({
-            "nom": noms_originaux[cle],
-            "quantite": quantite,
-            "unite": cle[1],
-        })
-    return liste_finale
-
-
-def _run_git(*args: str) -> subprocess.CompletedProcess:
-    """Exécute une commande git dans le dossier du projet."""
-    return subprocess.run(
-        ["git"] + list(args),
-        cwd=DOSSIER_PROJET,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
 
 
 def git_auto_push() -> dict:
@@ -92,7 +44,11 @@ def git_auto_push() -> dict:
     if result.returncode != 0:
         result = _run_git("init")
         if result.returncode != 0:
-            return {"success": False, "steps": steps, "error": f"git init failed: {result.stderr.strip()}"}
+            return {
+                "success": False,
+                "steps": steps,
+                "error": f"git init failed: {result.stderr.strip()}",
+            }
         _run_git("branch", "-M", "main")
         steps.append("Dépôt Git initialisé")
     else:
@@ -103,7 +59,11 @@ def git_auto_push() -> dict:
     if result.returncode != 0:
         result = _run_git("remote", "add", "origin", GITHUB_REMOTE)
         if result.returncode != 0:
-            return {"success": False, "steps": steps, "error": f"remote add failed: {result.stderr.strip()}"}
+            return {
+                "success": False,
+                "steps": steps,
+                "error": f"remote add failed: {result.stderr.strip()}",
+            }
         steps.append(f"Remote origin ajouté → {GITHUB_REMOTE}")
     else:
         url = result.stdout.strip()
@@ -116,7 +76,11 @@ def git_auto_push() -> dict:
     # Étape 3 : git add
     result = _run_git("add", ".")
     if result.returncode != 0:
-        return {"success": False, "steps": steps, "error": f"git add failed: {result.stderr.strip()}"}
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"git add failed: {result.stderr.strip()}",
+        }
 
     # Vérifier s'il y a des changements
     result = _run_git("diff", "--cached", "--quiet")
@@ -128,16 +92,28 @@ def git_auto_push() -> dict:
     msg = f"Mise à jour automatique - {NOM_PROJET}"
     result = _run_git("commit", "-m", msg)
     if result.returncode != 0:
-        return {"success": False, "steps": steps, "error": f"commit failed: {result.stderr.strip()}"}
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"commit failed: {result.stderr.strip()}",
+        }
     steps.append(f'Commit : "{msg}"')
 
     # Étape 5 : git push
     result = _run_git("push", "-u", "origin", "main")
     if result.returncode != 0:
-        return {"success": False, "steps": steps, "error": f"push failed: {result.stderr.strip()}"}
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"push failed: {result.stderr.strip()}",
+        }
 
     steps.append("Push réussi !")
-    return {"success": True, "steps": steps, "message": "Dépôt GitHub mis à jour"}
+    return {
+        "success": True,
+        "steps": steps,
+        "message": "Dépôt GitHub mis à jour",
+    }
 
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
@@ -185,7 +161,12 @@ def api_compiler():
     selection = [recettes[i] for i in indices if 0 <= i < len(recettes)]
 
     if not selection:
-        return jsonify({"success": False, "error": "Aucune recette sélectionnée"}), 400
+        return (
+            jsonify(
+                {"success": False, "error": "Aucune recette sélectionnée"}
+            ),
+            400,
+        )
 
     liste = compiler_ingredients(selection)
     noms_recettes = [r["nom"] for r in selection]
@@ -201,22 +182,26 @@ def api_compiler():
     ]
     for nom in noms_recettes:
         lignes.append(f"  • {nom}")
-    lignes.extend([
-        "━" * 35,
-        "",
-        f"📝 {len(liste)} articles à acheter :",
-        "",
-    ])
+    lignes.extend(
+        [
+            "━" * 35,
+            "",
+            f"📝 {len(liste)} articles à acheter :",
+            "",
+        ]
+    )
     for ing in liste:
         lignes.append(f"☐ {ing['nom']} — {ing['quantite']} {ing['unite']}")
     lignes.extend(["", "━" * 35, "Bon shopping ! 🛍️"])
 
-    return jsonify({
-        "success": True,
-        "liste": liste,
-        "recettes": noms_recettes,
-        "texte_export": "\n".join(lignes),
-    })
+    return jsonify(
+        {
+            "success": True,
+            "liste": liste,
+            "recettes": noms_recettes,
+            "texte_export": "\n".join(lignes),
+        }
+    )
 
 
 @app.route("/api/git-push", methods=["POST"])
