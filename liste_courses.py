@@ -216,12 +216,26 @@ def compiler_ingredients(selection: list[dict]) -> list[dict]:
     # Garder le nom original (première occurrence) pour l'affichage
     noms_originaux: dict[tuple[str, str], str] = {}
 
+    cache_nom: dict[str, str] = {}
+    cache_unite: dict[str, str] = {}
+
     for recette in selection:
         for ing in recette["ingredients"]:
-            cle = (ing["nom"].lower().strip(), ing["unite"].lower().strip())
+            nom = ing["nom"]
+            unite = ing["unite"]
+
+            if nom not in cache_nom:
+                cache_nom[nom] = nom.lower().strip()
+            nom_norm = cache_nom[nom]
+
+            if unite not in cache_unite:
+                cache_unite[unite] = unite.lower().strip()
+            unite_norm = cache_unite[unite]
+
+            cle = (nom_norm, unite_norm)
             comptes[cle] += ing["quantite"]
             if cle not in noms_originaux:
-                noms_originaux[cle] = ing["nom"]
+                noms_originaux[cle] = nom
 
     # Construire la liste finale triée alphabétiquement
     liste_finale = []
