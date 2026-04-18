@@ -63,11 +63,13 @@ def compiler_ingredients(selection: list[dict]) -> list[dict]:
     for cle, quantite in sorted(comptes.items(), key=lambda x: x[0][0]):
         if quantite == int(quantite):
             quantite = int(quantite)
-        liste_finale.append({
-            "nom": noms_originaux[cle],
-            "quantite": quantite,
-            "unite": cle[1],
-        })
+        liste_finale.append(
+            {
+                "nom": noms_originaux[cle],
+                "quantite": quantite,
+                "unite": cle[1],
+            }
+        )
     return liste_finale
 
 
@@ -92,7 +94,11 @@ def git_auto_push() -> dict:
     if result.returncode != 0:
         result = _run_git("init")
         if result.returncode != 0:
-            return {"success": False, "steps": steps, "error": f"git init failed: {result.stderr.strip()}"}
+            return {
+                "success": False,
+                "steps": steps,
+                "error": f"git init failed: {result.stderr.strip()}",
+            }
         _run_git("branch", "-M", "main")
         steps.append("Dépôt Git initialisé")
     else:
@@ -103,7 +109,11 @@ def git_auto_push() -> dict:
     if result.returncode != 0:
         result = _run_git("remote", "add", "origin", GITHUB_REMOTE)
         if result.returncode != 0:
-            return {"success": False, "steps": steps, "error": f"remote add failed: {result.stderr.strip()}"}
+            return {
+                "success": False,
+                "steps": steps,
+                "error": f"remote add failed: {result.stderr.strip()}",
+            }
         steps.append(f"Remote origin ajouté → {GITHUB_REMOTE}")
     else:
         url = result.stdout.strip()
@@ -116,7 +126,11 @@ def git_auto_push() -> dict:
     # Étape 3 : git add
     result = _run_git("add", ".")
     if result.returncode != 0:
-        return {"success": False, "steps": steps, "error": f"git add failed: {result.stderr.strip()}"}
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"git add failed: {result.stderr.strip()}",
+        }
 
     # Vérifier s'il y a des changements
     result = _run_git("diff", "--cached", "--quiet")
@@ -128,13 +142,21 @@ def git_auto_push() -> dict:
     msg = f"Mise à jour automatique - {NOM_PROJET}"
     result = _run_git("commit", "-m", msg)
     if result.returncode != 0:
-        return {"success": False, "steps": steps, "error": f"commit failed: {result.stderr.strip()}"}
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"commit failed: {result.stderr.strip()}",
+        }
     steps.append(f'Commit : "{msg}"')
 
     # Étape 5 : git push
     result = _run_git("push", "-u", "origin", "main")
     if result.returncode != 0:
-        return {"success": False, "steps": steps, "error": f"push failed: {result.stderr.strip()}"}
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"push failed: {result.stderr.strip()}",
+        }
 
     steps.append("Push réussi !")
     return {"success": True, "steps": steps, "message": "Dépôt GitHub mis à jour"}
@@ -201,22 +223,26 @@ def api_compiler():
     ]
     for nom in noms_recettes:
         lignes.append(f"  • {nom}")
-    lignes.extend([
-        "━" * 35,
-        "",
-        f"📝 {len(liste)} articles à acheter :",
-        "",
-    ])
+    lignes.extend(
+        [
+            "━" * 35,
+            "",
+            f"📝 {len(liste)} articles à acheter :",
+            "",
+        ]
+    )
     for ing in liste:
         lignes.append(f"☐ {ing['nom']} — {ing['quantite']} {ing['unite']}")
     lignes.extend(["", "━" * 35, "Bon shopping ! 🛍️"])
 
-    return jsonify({
-        "success": True,
-        "liste": liste,
-        "recettes": noms_recettes,
-        "texte_export": "\n".join(lignes),
-    })
+    return jsonify(
+        {
+            "success": True,
+            "liste": liste,
+            "recettes": noms_recettes,
+            "texte_export": "\n".join(lignes),
+        }
+    )
 
 
 @app.route("/api/git-push", methods=["POST"])
@@ -230,4 +256,4 @@ def api_git_push():
 
 if __name__ == "__main__":
     print("\n  [*] Interface web disponible sur : http://localhost:5000\n")
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=False, host="0.0.0.0", port=5000)
