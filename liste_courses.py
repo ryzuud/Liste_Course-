@@ -131,6 +131,22 @@ def afficher_detail_recette(recette: dict):
     print()
 
 
+def parser_choix_recettes(
+    choix: str, recettes: list[dict]
+) -> tuple[list[dict], list[int]]:
+    """Parse le choix utilisateur et retourne la sélection et les invalides."""
+    indices = [int(x.strip()) for x in choix.split(",")]
+    selection = []
+    invalides = []
+
+    for idx in indices:
+        if 1 <= idx <= len(recettes):
+            selection.append(recettes[idx - 1])
+        else:
+            invalides.append(idx)
+    return selection, invalides
+
+
 def selectionner_recettes(recettes: list[dict]) -> list[dict]:
     """Permet à l'utilisateur de sélectionner les recettes de la semaine."""
     print()
@@ -160,15 +176,7 @@ def selectionner_recettes(recettes: list[dict]) -> list[dict]:
             continue
 
         try:
-            indices = [int(x.strip()) for x in choix.split(",")]
-            selection = []
-            invalides = []
-
-            for idx in indices:
-                if 1 <= idx <= len(recettes):
-                    selection.append(recettes[idx - 1])
-                else:
-                    invalides.append(idx)
+            selection, invalides = parser_choix_recettes(choix, recettes)
 
             if invalides:
                 print(
