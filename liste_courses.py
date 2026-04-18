@@ -370,27 +370,8 @@ def menu_export(liste: list[dict], selection: list[dict]):
     print()
 
 
-def ajouter_recette(recettes: list[dict]) -> list[dict]:
-    """Permet d'ajouter une nouvelle recette au fichier JSON."""
-    print()
-    print(f"  {C.GRAS}{C.VERT}➕ AJOUTER UNE NOUVELLE RECETTE{C.RESET}")
-    print(f"  {'─' * 40}")
-    print()
-
-    nom = input(f"  {C.CYAN}Nom de la recette ▸ {C.RESET}").strip()
-    if not nom:
-        print(f"  {C.ROUGE}⚠ Nom invalide, abandon.{C.RESET}")
-        return recettes
-
-    while True:
-        try:
-            portions = int(
-                input(f"  {C.CYAN}Nombre de portions ▸ {C.RESET}").strip()
-            )
-            break
-        except ValueError:
-            print(f"  {C.ROUGE}⚠ Entrez un nombre entier.{C.RESET}")
-
+def prompt_for_ingredients() -> list[dict]:
+    """Demande à l'utilisateur de saisir les ingrédients un par un."""
     ingredients = []
     print()
     print(
@@ -432,6 +413,32 @@ def ajouter_recette(recettes: list[dict]) -> list[dict]:
         )
         print(f"    {C.VERT}✓ {nom_ing} ajouté{C.RESET}")
         print()
+
+    return ingredients
+
+
+def ajouter_recette(recettes: list[dict]) -> list[dict]:
+    """Permet d'ajouter une nouvelle recette au fichier JSON."""
+    print()
+    print(f"  {C.GRAS}{C.VERT}➕ AJOUTER UNE NOUVELLE RECETTE{C.RESET}")
+    print(f"  {'─' * 40}")
+    print()
+
+    nom = input(f"  {C.CYAN}Nom de la recette ▸ {C.RESET}").strip()
+    if not nom:
+        print(f"  {C.ROUGE}⚠ Nom invalide, abandon.{C.RESET}")
+        return recettes
+
+    while True:
+        try:
+            portions = int(
+                input(f"  {C.CYAN}Nombre de portions ▸ {C.RESET}").strip()
+            )
+            break
+        except ValueError:
+            print(f"  {C.ROUGE}⚠ Entrez un nombre entier.{C.RESET}")
+
+    ingredients = prompt_for_ingredients()
 
     nouvelle_recette = {
         "nom": nom,
