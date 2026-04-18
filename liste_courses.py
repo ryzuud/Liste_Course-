@@ -9,8 +9,18 @@ import json
 import os
 import subprocess
 import sys
-from collections import defaultdict
 from datetime import datetime
+
+from utils import (
+    DOSSIER_PROJET,
+    FICHIER_RECETTES,
+    NOM_PROJET,
+    GITHUB_REMOTE,
+    charger_recettes_base,
+    sauvegarder_recettes,
+    compiler_ingredients,
+    _run_git,
+)
 
 # Forcer l'encodage UTF-8 sur Windows pour supporter les emojis et caractères spéciaux  # noqa: E501, pylint: disable=line-too-long
 if sys.platform == "win32":
@@ -19,13 +29,10 @@ if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stderr.reconfigure(encoding="utf-8")
 
+
 # ─── Configuration ────────────────────────────────────────────────────────────  # noqa: E501, pylint: disable=line-too-long
 
-DOSSIER_PROJET = os.path.dirname(os.path.abspath(__file__))
-FICHIER_RECETTES = os.path.join(DOSSIER_PROJET, "recettes.json")
 FICHIER_EXPORT = os.path.join(DOSSIER_PROJET, "liste_courses.txt")
-NOM_PROJET = "Liste_Course"
-GITHUB_REMOTE = "https://github.com/ryzuud/Liste_Course-.git"
 
 
 # ─── Couleurs terminal ───────────────────────────────────────────────────────
@@ -57,9 +64,7 @@ C = Couleurs
 def charger_recettes() -> list[dict]:
     """Charge les recettes depuis le fichier JSON."""
     try:
-        with open(FICHIER_RECETTES, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return data.get("recettes", [])
+        return charger_recettes_base()
     except FileNotFoundError:
         print(
             f"{C.ROUGE}❌ Fichier '{FICHIER_RECETTES}' introuvable.{C.RESET}"
@@ -203,45 +208,6 @@ def selectionner_recettes(recettes: list[dict]) -> list[dict]:
             print(
                 f"  {C.ROUGE}⚠ Format invalide. Utilisez des numéros séparés par des virgules.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
             )
-
-
-def compiler_ingredients(selection: list[dict]) -> list[dict]:
-    """
-    Compile tous les ingrédients des recettes sélectionnées.
-    Additionne les quantités des ingrédients communs (même nom + même unité).
-    Retourne une liste triée par catégorie implicite (ordre alphabétique).
-    """
-    # Clé = (nom_normalisé, unité) → quantité cumulée
-    comptes: dict[tuple[str, str], float] = defaultdict(float)
-    # Garder le nom original (première occurrence) pour l'affichage
-    noms_originaux: dict[tuple[str, str], str] = {}
-
-    for recette in selection:
-        for ing in recette["ingredients"]:
-            cle = (ing["nom"].lower().strip(), ing["unite"].lower().strip())
-            comptes[cle] += ing["quantite"]
-            if cle not in noms_originaux:
-                noms_originaux[cle] = ing["nom"]
-
-    # Construire la liste finale triée alphabétiquement
-    liste_finale = []
-    for cle, quantite in sorted(comptes.items(), key=lambda x: x[0][0]):
-        nom_affiche = noms_originaux[cle]
-        unite = cle[1]
-
-        # Formater la quantité (entier si pas de décimales)
-        if quantite == int(quantite):
-            quantite = int(quantite)
-
-        liste_finale.append(
-            {
-                "nom": nom_affiche,
-                "quantite": quantite,
-                "unite": unite,
-            }
-        )
-
-    return liste_finale
 
 
 def afficher_liste_courses(liste: list[dict], selection: list[dict]):
@@ -487,26 +453,7 @@ def supprimer_recette(recettes: list[dict]) -> list[dict]:
     return recettes
 
 
-def sauvegarder_recettes(recettes: list[dict]):
-    """Sauvegarde les recettes dans le fichier JSON."""
-    data = {"recettes": recettes}
-    with open(FICHIER_RECETTES, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-
 # ─── Automatisation Git ──────────────────────────────────────────────────────
-
-
-def _run_git(*args: str) -> subprocess.CompletedProcess:
-    """Exécute une commande git dans le dossier du projet."""
-    return subprocess.run(
-        ["git"] + list(args),
-        cwd=DOSSIER_PROJET,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
 
 
 def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
