@@ -44,8 +44,13 @@ const api = {
         return res.json();
     },
 
-    async gitPush() {
-        const res = await fetch('/api/git-push', { method: 'POST' });
+    async gitPush(token) {
+        const res = await fetch('/api/git-push', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         return res.json();
     },
 };
@@ -435,6 +440,12 @@ function downloadTxt() {
 // ─── Git Push ────────────────────────────────────────────────────────────────
 
 async function gitPush() {
+    const token = prompt("Veuillez entrer le token d'authentification pour le Git Push :");
+    if (!token) {
+        showToast("Authentification annulée", "error");
+        return;
+    }
+
     const overlay = $('#modal-git-overlay');
     const stepsDiv = $('#git-steps');
     const statusDiv = $('#git-status');
@@ -445,7 +456,7 @@ async function gitPush() {
     statusDiv.className = 'git-status';
 
     try {
-        const data = await api.gitPush();
+        const data = await api.gitPush(token);
 
         stepsDiv.innerHTML = data.steps
             .map((step) => `<div class="git-step">✅ ${escapeHtml(step)}</div>`)

@@ -3,6 +3,7 @@ Serveur web Flask pour le Gestionnaire de Liste de Courses.
 Lance l'interface web sur http://localhost:5000
 """
 
+import hmac
 import json
 import os
 import subprocess
@@ -222,6 +223,18 @@ def api_compiler():
 @app.route("/api/git-push", methods=["POST"])
 def api_git_push():
     """Lance l'automatisation Git."""
+    expected_token = os.environ.get("GIT_PUSH_TOKEN")
+    if not expected_token:
+        return jsonify({"success": False, "error": "Configuration serveur manquante (GIT_PUSH_TOKEN non défini)"}), 500
+
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"success": False, "error": "Authentification requise"}), 401
+
+    token = auth_header.split(" ")[1]
+    if not hmac.compare_digest(token.encode('utf-8'), expected_token.encode('utf-8')):
+        return jsonify({"success": False, "error": "Token invalide"}), 403
+
     result = git_auto_push()
     return jsonify(result)
 
