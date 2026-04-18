@@ -61,9 +61,7 @@ def charger_recettes() -> list[dict]:
             data = json.load(f)
         return data.get("recettes", [])
     except FileNotFoundError:
-        print(
-            f"{C.ROUGE}❌ Fichier '{FICHIER_RECETTES}' introuvable.{C.RESET}"
-        )
+        print(f"{C.ROUGE}❌ Fichier '{FICHIER_RECETTES}' introuvable.{C.RESET}")
         sys.exit(1)
     except json.JSONDecodeError as e:
         print(f"{C.ROUGE}❌ Erreur de lecture JSON : {e}{C.RESET}")
@@ -91,9 +89,7 @@ def afficher_menu_principal():
     print(f"{C.BLEU}{C.GRAS}  MENU PRINCIPAL{C.RESET}")
     print(f"{C.GRAS}{'─' * 50}{C.RESET}")
     print(f"  {C.JAUNE}1.{C.RESET} 📋  Voir toutes les recettes")
-    print(
-        f"  {C.JAUNE}2.{C.RESET} ✅  Sélectionner les recettes de la semaine"
-    )
+    print(f"  {C.JAUNE}2.{C.RESET} ✅  Sélectionner les recettes de la semaine")
     print(f"  {C.JAUNE}3.{C.RESET} 📝  Générer la liste de courses")
     print(f"  {C.JAUNE}4.{C.RESET} ➕  Ajouter une nouvelle recette")
     print(f"  {C.JAUNE}5.{C.RESET} 🗑️   Supprimer une recette")
@@ -104,17 +100,13 @@ def afficher_menu_principal():
 def afficher_recettes(recettes: list[dict]):
     """Affiche la liste de toutes les recettes disponibles."""
     print()
-    print(
-        f"{C.GRAS}{C.BLEU}  📖 RECETTES DISPONIBLES ({len(recettes)}){C.RESET}"
-    )
+    print(f"{C.GRAS}{C.BLEU}  📖 RECETTES DISPONIBLES ({len(recettes)}){C.RESET}")
     print(f"  {'─' * 46}")
     for i, recette in enumerate(recettes, 1):
         nb_ing = len(recette["ingredients"])
         portions = recette.get("portions", "?")
         print(f"  {C.JAUNE}{i:>2}.{C.RESET} {C.GRAS}{recette['nom']}{C.RESET}")
-        print(
-            f"      {C.DIM}{nb_ing} ingrédients · {portions} portions{C.RESET}"
-        )
+        print(f"      {C.DIM}{nb_ing} ingrédients · {portions} portions{C.RESET}")
     print()
 
 
@@ -134,9 +126,7 @@ def afficher_detail_recette(recette: dict):
 def selectionner_recettes(recettes: list[dict]) -> list[dict]:
     """Permet à l'utilisateur de sélectionner les recettes de la semaine."""
     print()
-    print(
-        f"{C.GRAS}{C.VERT}  ✅ SÉLECTION DES RECETTES DE LA SEMAINE{C.RESET}"
-    )
+    print(f"{C.GRAS}{C.VERT}  ✅ SÉLECTION DES RECETTES DE LA SEMAINE{C.RESET}")
     print(f"  {'─' * 46}")
     print()
 
@@ -188,11 +178,7 @@ def selectionner_recettes(recettes: list[dict]) -> list[dict]:
                 print(f"    {C.VERT}✓{C.RESET} {r['nom']}")
             print()
 
-            confirm = (
-                input(f"  {C.CYAN}Confirmer ? (O/n) ▸ {C.RESET}")
-                .strip()
-                .lower()
-            )
+            confirm = input(f"  {C.CYAN}Confirmer ? (O/n) ▸ {C.RESET}").strip().lower()
             if confirm in ("", "o", "oui", "y", "yes"):
                 return selection
 
@@ -344,12 +330,8 @@ def menu_export(liste: list[dict], selection: list[dict]):
 
     if choix in ("1", "3"):
         if copier_presse_papiers(texte):
-            print(
-                f"\n  {C.VERT}✅ Liste copiée dans le presse-papiers !{C.RESET}"
-            )
-            print(
-                f"  {C.DIM}→ Ouvrez Samsung Notes et collez (Ctrl+V){C.RESET}"
-            )
+            print(f"\n  {C.VERT}✅ Liste copiée dans le presse-papiers !{C.RESET}")
+            print(f"  {C.DIM}→ Ouvrez Samsung Notes et collez (Ctrl+V){C.RESET}")
         else:
             print(
                 f"\n  {C.ROUGE}❌ Impossible de copier dans le presse-papiers.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
@@ -384,9 +366,7 @@ def ajouter_recette(recettes: list[dict]) -> list[dict]:
 
     while True:
         try:
-            portions = int(
-                input(f"  {C.CYAN}Nombre de portions ▸ {C.RESET}").strip()
-            )
+            portions = int(input(f"  {C.CYAN}Nombre de portions ▸ {C.RESET}").strip())
             break
         except ValueError:
             print(f"  {C.ROUGE}⚠ Entrez un nombre entier.{C.RESET}")
@@ -408,9 +388,7 @@ def ajouter_recette(recettes: list[dict]) -> list[dict]:
 
         while True:
             try:
-                quantite = float(
-                    input(f"    {C.JAUNE}Quantité ▸ {C.RESET}").strip()
-                )
+                quantite = float(input(f"    {C.JAUNE}Quantité ▸ {C.RESET}").strip())
                 break
             except ValueError:
                 print(f"    {C.ROUGE}⚠ Entrez un nombre.{C.RESET}")
@@ -424,9 +402,7 @@ def ajouter_recette(recettes: list[dict]) -> list[dict]:
         ingredients.append(
             {
                 "nom": nom_ing,
-                "quantite": (
-                    quantite if quantite != int(quantite) else int(quantite)
-                ),
+                "quantite": (quantite if quantite != int(quantite) else int(quantite)),
                 "unite": unite,
             }
         )
@@ -459,9 +435,7 @@ def supprimer_recette(recettes: list[dict]) -> list[dict]:
 
     try:
         choix = int(
-            input(
-                f"  {C.CYAN}Numéro à supprimer (0 = annuler) ▸ {C.RESET}"
-            ).strip()
+            input(f"  {C.CYAN}Numéro à supprimer (0 = annuler) ▸ {C.RESET}").strip()
         )
         if choix == 0:
             return recettes
@@ -509,120 +483,117 @@ def _run_git(*args: str) -> subprocess.CompletedProcess:
     )
 
 
-def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
-    """
-    Automatisation Git :
-    1. Vérifie / initialise le dépôt Git
-    2. Vérifie / configure le remote origin
-    3. git add . → git commit → git push origin main
-    """
+def afficher_resultat_git(result: dict):
+    """Affiche le résultat de l'automatisation Git."""
     print()
     print(f"{C.GRAS}{'─' * 50}{C.RESET}")
     print(f"{C.BLEU}{C.GRAS}  🔄 AUTOMATISATION GIT{C.RESET}")
     print(f"{C.GRAS}{'─' * 50}{C.RESET}")
     print()
 
-    # ── Étape 1 : Vérifier / initialiser le dépôt ─────────────────────────
+    if result.get("steps"):
+        for step in result["steps"]:
+            print(f"  {C.VERT}✅ {step}{C.RESET}")
+
+    if result.get("success"):
+        print(
+            f"\n  {C.VERT}{C.GRAS}✅ {result.get('message', 'Opération réussie')}{C.RESET}"
+        )
+        if "Push réussi !" in result.get("steps", []):
+            print(f"  {C.DIM}→ https://github.com/ryzuud/Liste_Course-{C.RESET}")
+    else:
+        error = result.get("error", "Erreur inconnue")
+        print(f"\n  {C.ROUGE}❌ Échec de l'opération : {error}{C.RESET}")
+        if "rejected" in error:
+            print(
+                f"\n  {C.JAUNE}💡 Astuce : essayez 'git pull --rebase origin main' puis relancez.{C.RESET}"
+            )
+        elif "Could not resolve host" in error or "unable to access" in error:
+            print(
+                f"\n  {C.JAUNE}💡 Vérifiez votre connexion internet et l'URL du dépôt.{C.RESET}"
+            )
+        elif "Authentication" in error or "403" in error:
+            print(
+                f"\n  {C.JAUNE}💡 Vérifiez votre authentification GitHub (token / SSH).{C.RESET}"
+            )
+    print()
+
+
+def git_auto_push() -> dict:  # pylint: disable=too-many-return-statements
+    """Automatisation Git. Retourne un dict avec le statut de chaque étape."""
+    steps = []
+
+    # Étape 1 : Vérifier / initialiser le dépôt
     result = _run_git("rev-parse", "--is-inside-work-tree")
     if result.returncode != 0:
-        print(
-            f"  {C.JAUNE}📁 Aucun dépôt Git détecté. Initialisation...{C.RESET}"
-        )
         result = _run_git("init")
         if result.returncode != 0:
-            print(
-                f"  {C.ROUGE}❌ Échec de git init : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
-            )
-            return
-        # S'assurer qu'on est sur la branche main
+            return {
+                "success": False,
+                "steps": steps,
+                "error": f"git init failed: {result.stderr.strip()}",
+            }
         _run_git("branch", "-M", "main")
-        print(
-            f"  {C.VERT}✅ Dépôt Git initialisé sur la branche main.{C.RESET}"
-        )
+        steps.append("Dépôt Git initialisé")
     else:
-        print(f"  {C.VERT}✅ Dépôt Git détecté.{C.RESET}")
+        steps.append("Dépôt Git détecté")
 
-    # ── Étape 2 : Vérifier / configurer le remote origin ──────────────────
+    # Étape 2 : Vérifier / configurer le remote
     result = _run_git("remote", "get-url", "origin")
     if result.returncode != 0:
-        # Pas de remote origin → l'ajouter
-        print(
-            f"  {C.JAUNE}🔗 Ajout du remote origin → {GITHUB_REMOTE}{C.RESET}"
-        )
         result = _run_git("remote", "add", "origin", GITHUB_REMOTE)
         if result.returncode != 0:
-            print(
-                f"  {C.ROUGE}❌ Échec de l'ajout du remote : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
-            )
-            return
-        print(f"  {C.VERT}✅ Remote origin ajouté.{C.RESET}")
+            return {
+                "success": False,
+                "steps": steps,
+                "error": f"remote add failed: {result.stderr.strip()}",
+            }
+        steps.append(f"Remote origin ajouté → {GITHUB_REMOTE}")
     else:
-        url_actuelle = result.stdout.strip()
-        if url_actuelle != GITHUB_REMOTE:
-            print(f"  {C.JAUNE}🔗 Mise à jour du remote origin :{C.RESET}")
-            print(f"     {C.DIM}{url_actuelle} → {GITHUB_REMOTE}{C.RESET}")
+        url = result.stdout.strip()
+        if url != GITHUB_REMOTE:
             _run_git("remote", "set-url", "origin", GITHUB_REMOTE)
-            print(f"  {C.VERT}✅ Remote origin mis à jour.{C.RESET}")
+            steps.append("Remote origin mis à jour")
         else:
-            print(
-                f"  {C.VERT}✅ Remote origin correctement configuré.{C.RESET}"
-            )
+            steps.append("Remote origin OK")
 
-    # ── Étape 3 : git add . ───────────────────────────────────────────────
-    print(f"\n  {C.CYAN}📦 Ajout des fichiers modifiés...{C.RESET}")
+    # Étape 3 : git add
     result = _run_git("add", ".")
     if result.returncode != 0:
-        print(
-            f"  {C.ROUGE}❌ Échec de git add : {result.stderr.strip()}{C.RESET}"
-        )
-        return
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"git add failed: {result.stderr.strip()}",
+        }
 
-    # Vérifier s'il y a quelque chose à commiter
+    # Vérifier s'il y a des changements
     result = _run_git("diff", "--cached", "--quiet")
     if result.returncode == 0:
-        print(f"  {C.JAUNE}ℹ️  Aucune modification à commiter.{C.RESET}")
-        print(f"  {C.DIM}Le dépôt est déjà à jour.{C.RESET}")
-        return
+        steps.append("Aucune modification à commiter")
+        return {"success": True, "steps": steps, "message": "Déjà à jour"}
 
-    # ── Étape 4 : git commit ──────────────────────────────────────────────
-    message_commit = f"Mise à jour automatique - {NOM_PROJET}"
-    print(f'  {C.CYAN}💬 Commit : "{message_commit}"...{C.RESET}')
-    result = _run_git("commit", "-m", message_commit)
+    # Étape 4 : git commit
+    msg = f"Mise à jour automatique - {NOM_PROJET}"
+    result = _run_git("commit", "-m", msg)
     if result.returncode != 0:
-        print(
-            f"  {C.ROUGE}❌ Échec de git commit : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
-        )
-        return
-    print(f"  {C.VERT}✅ Commit effectué.{C.RESET}")
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"commit failed: {result.stderr.strip()}",
+        }
+    steps.append(f'Commit : "{msg}"')
 
-    # ── Étape 5 : git push origin main ────────────────────────────────────
-    print(f"  {C.CYAN}🚀 Push vers origin/main...{C.RESET}")
+    # Étape 5 : git push
     result = _run_git("push", "-u", "origin", "main")
     if result.returncode != 0:
-        stderr = result.stderr.strip()
-        print(f"\n  {C.ROUGE}❌ Échec du push :{C.RESET}")
-        print(f"  {C.ROUGE}{stderr}{C.RESET}")
-        if "rejected" in stderr:
-            print(
-                f"\n  {C.JAUNE}💡 Astuce : essayez 'git pull --rebase origin main' puis relancez.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
-            )
-        elif (
-            "Could not resolve host" in stderr or "unable to access" in stderr
-        ):
-            print(
-                f"\n  {C.JAUNE}💡 Vérifiez votre connexion internet et l'URL du dépôt.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
-            )
-        elif "Authentication" in stderr or "403" in stderr:
-            print(
-                f"\n  {C.JAUNE}💡 Vérifiez votre authentification GitHub (token / SSH).{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
-            )
-        return
+        return {
+            "success": False,
+            "steps": steps,
+            "error": f"push failed: {result.stderr.strip()}",
+        }
 
-    print(
-        f"\n  {C.VERT}{C.GRAS}✅ Push réussi ! Dépôt GitHub mis à jour.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
-    )
-    print(f"  {C.DIM}→ https://github.com/ryzuud/Liste_Course-{C.RESET}")
-    print()
+    steps.append("Push réussi !")
+    return {"success": True, "steps": steps, "message": "Dépôt GitHub mis à jour"}
 
 
 # ─── Boucle principale ───────────────────────────────────────────────────────
@@ -688,7 +659,7 @@ if __name__ == "__main__":
     try:
         SUCCES = main()
         if SUCCES:
-            git_auto_push()
+            afficher_resultat_git(git_auto_push())
     except KeyboardInterrupt:
         print(f"\n\n  {C.JAUNE}⚠ Interruption clavier. Au revoir !{C.RESET}\n")
     except Exception as e:  # pylint: disable=broad-exception-caught
