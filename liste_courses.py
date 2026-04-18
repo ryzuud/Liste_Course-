@@ -509,20 +509,8 @@ def _run_git(*args: str) -> subprocess.CompletedProcess:
     )
 
 
-def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
-    """
-    Automatisation Git :
-    1. Vérifie / initialise le dépôt Git
-    2. Vérifie / configure le remote origin
-    3. git add . → git commit → git push origin main
-    """
-    print()
-    print(f"{C.GRAS}{'─' * 50}{C.RESET}")
-    print(f"{C.BLEU}{C.GRAS}  🔄 AUTOMATISATION GIT{C.RESET}")
-    print(f"{C.GRAS}{'─' * 50}{C.RESET}")
-    print()
-
-    # ── Étape 1 : Vérifier / initialiser le dépôt ─────────────────────────
+def _init_repo() -> bool:
+    """Étape 1 : Vérifier / initialiser le dépôt Git."""
     result = _run_git("rev-parse", "--is-inside-work-tree")
     if result.returncode != 0:
         print(
@@ -533,7 +521,7 @@ def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
             print(
                 f"  {C.ROUGE}❌ Échec de git init : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
             )
-            return
+            return False
         # S'assurer qu'on est sur la branche main
         _run_git("branch", "-M", "main")
         print(
@@ -541,8 +529,11 @@ def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
         )
     else:
         print(f"  {C.VERT}✅ Dépôt Git détecté.{C.RESET}")
+    return True
 
-    # ── Étape 2 : Vérifier / configurer le remote origin ──────────────────
+
+def _configure_remote() -> bool:
+    """Étape 2 : Vérifier / configurer le remote origin."""
     result = _run_git("remote", "get-url", "origin")
     if result.returncode != 0:
         # Pas de remote origin → l'ajouter
@@ -554,7 +545,7 @@ def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
             print(
                 f"  {C.ROUGE}❌ Échec de l'ajout du remote : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
             )
-            return
+            return False
         print(f"  {C.VERT}✅ Remote origin ajouté.{C.RESET}")
     else:
         url_actuelle = result.stdout.strip()
@@ -567,24 +558,31 @@ def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
             print(
                 f"  {C.VERT}✅ Remote origin correctement configuré.{C.RESET}"
             )
+    return True
 
-    # ── Étape 3 : git add . ───────────────────────────────────────────────
+
+def _git_add_and_check() -> bool:
+    """Étape 3 : git add . et vérifier s'il y a des modifications."""
     print(f"\n  {C.CYAN}📦 Ajout des fichiers modifiés...{C.RESET}")
     result = _run_git("add", ".")
     if result.returncode != 0:
         print(
             f"  {C.ROUGE}❌ Échec de git add : {result.stderr.strip()}{C.RESET}"
         )
-        return
+        return False
 
     # Vérifier s'il y a quelque chose à commiter
     result = _run_git("diff", "--cached", "--quiet")
     if result.returncode == 0:
         print(f"  {C.JAUNE}ℹ️  Aucune modification à commiter.{C.RESET}")
         print(f"  {C.DIM}Le dépôt est déjà à jour.{C.RESET}")
-        return
+        return False
 
-    # ── Étape 4 : git commit ──────────────────────────────────────────────
+    return True
+
+
+def _git_commit() -> bool:
+    """Étape 4 : git commit."""
     message_commit = f"Mise à jour automatique - {NOM_PROJET}"
     print(f'  {C.CYAN}💬 Commit : "{message_commit}"...{C.RESET}')
     result = _run_git("commit", "-m", message_commit)
@@ -592,10 +590,13 @@ def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
         print(
             f"  {C.ROUGE}❌ Échec de git commit : {result.stderr.strip()}{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
         )
-        return
+        return False
     print(f"  {C.VERT}✅ Commit effectué.{C.RESET}")
+    return True
 
-    # ── Étape 5 : git push origin main ────────────────────────────────────
+
+def _git_push() -> bool:
+    """Étape 5 : git push origin main."""
     print(f"  {C.CYAN}🚀 Push vers origin/main...{C.RESET}")
     result = _run_git("push", "-u", "origin", "main")
     if result.returncode != 0:
@@ -616,13 +617,38 @@ def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
             print(
                 f"\n  {C.JAUNE}💡 Vérifiez votre authentification GitHub (token / SSH).{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
             )
-        return
+        return False
 
     print(
         f"\n  {C.VERT}{C.GRAS}✅ Push réussi ! Dépôt GitHub mis à jour.{C.RESET}"  # noqa: E501, pylint: disable=line-too-long
     )
     print(f"  {C.DIM}→ https://github.com/ryzuud/Liste_Course-{C.RESET}")
     print()
+    return True
+
+
+def git_auto_push():
+    """
+    Automatisation Git :
+    1. Vérifie / initialise le dépôt Git
+    2. Vérifie / configure le remote origin
+    3. git add . → git commit → git push origin main
+    """
+    print()
+    print(f"{C.GRAS}{'─' * 50}{C.RESET}")
+    print(f"{C.BLEU}{C.GRAS}  🔄 AUTOMATISATION GIT{C.RESET}")
+    print(f"{C.GRAS}{'─' * 50}{C.RESET}")
+    print()
+
+    if not _init_repo():
+        return
+    if not _configure_remote():
+        return
+    if not _git_add_and_check():
+        return
+    if not _git_commit():
+        return
+    _git_push()
 
 
 # ─── Boucle principale ───────────────────────────────────────────────────────
