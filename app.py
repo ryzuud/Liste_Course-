@@ -32,19 +32,43 @@ app = Flask(__name__, static_folder="static", template_folder="templates")
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
+_RECETTES_CACHE = None
+_RECETTES_CACHE_MTIME = 0.0
+
 
 def charger_recettes() -> list[dict]:
     """Charge les recettes depuis le fichier JSON."""
+    global _RECETTES_CACHE, _RECETTES_CACHE_MTIME
+
+    try:
+        current_mtime = os.path.getmtime(FICHIER_RECETTES)
+    except OSError:
+        current_mtime = 0.0
+
+    if _RECETTES_CACHE is not None and current_mtime == _RECETTES_CACHE_MTIME:
+        return _RECETTES_CACHE
+
     with open(FICHIER_RECETTES, "r", encoding="utf-8") as f:
         data = json.load(f)
-    return data.get("recettes", [])
+
+    _RECETTES_CACHE = data.get("recettes", [])
+    _RECETTES_CACHE_MTIME = current_mtime
+    return _RECETTES_CACHE
 
 
 def sauvegarder_recettes(recettes: list[dict]):
     """Sauvegarde les recettes dans le fichier JSON."""
+    global _RECETTES_CACHE, _RECETTES_CACHE_MTIME
+
     data = {"recettes": recettes}
     with open(FICHIER_RECETTES, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+    _RECETTES_CACHE = recettes
+    try:
+        _RECETTES_CACHE_MTIME = os.path.getmtime(FICHIER_RECETTES)
+    except OSError:
+        _RECETTES_CACHE_MTIME = 0.0
 
 
 def compiler_ingredients(selection: list[dict]) -> list[dict]:
@@ -159,7 +183,11 @@ def git_auto_push() -> dict:
         }
 
     steps.append("Push réussi !")
-    return {"success": True, "steps": steps, "message": "Dépôt GitHub mis à jour"}
+    return {
+        "success": True,
+        "steps": steps,
+        "message": "Dépôt GitHub mis à jour",
+    }
 
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
@@ -207,7 +235,10 @@ def api_compiler():
     selection = [recettes[i] for i in indices if 0 <= i < len(recettes)]
 
     if not selection:
-        return jsonify({"success": False, "error": "Aucune recette sélectionnée"}), 400
+        return (
+            jsonify({"success": False, "error": "Aucune recette sélectionnée"}),
+            400,
+        )
 
     liste = compiler_ingredients(selection)
     noms_recettes = [r["nom"] for r in selection]
