@@ -20,6 +20,8 @@ from datetime import datetime
 
 from flask import Flask, jsonify, render_template, request
 
+from git_utils import _run_git
+
 # ─── Configuration ────────────────────────────────────────────────────────────
 
 DOSSIER_PROJET = os.path.dirname(os.path.abspath(__file__))
@@ -69,18 +71,6 @@ def compiler_ingredients(selection: list[dict]) -> list[dict]:
             "unite": cle[1],
         })
     return liste_finale
-
-
-def _run_git(*args: str) -> subprocess.CompletedProcess:
-    """Exécute une commande git dans le dossier du projet."""
-    return subprocess.run(
-        ["git"] + list(args),
-        cwd=DOSSIER_PROJET,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
 
 
 def git_auto_push() -> dict:

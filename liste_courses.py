@@ -12,6 +12,8 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 
+from git_utils import _run_git
+
 # Forcer l'encodage UTF-8 sur Windows pour supporter les emojis et caractères spéciaux  # noqa: E501, pylint: disable=line-too-long
 if sys.platform == "win32":
     os.system("")  # Active le support ANSI/VT100 sur Windows 10+
@@ -495,18 +497,6 @@ def sauvegarder_recettes(recettes: list[dict]):
 
 
 # ─── Automatisation Git ──────────────────────────────────────────────────────
-
-
-def _run_git(*args: str) -> subprocess.CompletedProcess:
-    """Exécute une commande git dans le dossier du projet."""
-    return subprocess.run(
-        ["git"] + list(args),
-        cwd=DOSSIER_PROJET,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
 
 
 def git_auto_push():  # pylint: disable=too-many-branches,too-many-statements
